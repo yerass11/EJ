@@ -45,7 +45,67 @@ th { background: #2d6a4f; color: white; }
 .social-btn { padding: 15px; border-radius: 10px; text-decoration: none; color: white; text-align: center; font-weight: bold; }
 .inst { background: #e1306c; } .tt { background: #000; } .tg { background: #0088cc; }
 
+/* --- СТИЛИ ДЛЯ МОБИЛЬНОЙ ШАПКИ --- */
+#mobile-header {
+    display: none; /* Прячем на компьютерах */
+    background: #1b4332;
+    color: white;
+    padding: 15px 20px;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+#menu-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    width: auto;
+    padding: 0;
+    margin: 0;
+}
+
+/* --- АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ --- */
 @media (max-width: 768px) {
-    #sidebar { width: 100%; position: static; height: auto; }
-    #content { margin-left: 0; padding: 20px; }
+    body {
+        flex-direction: column;
+    }
+    
+    #mobile-header {
+        display: flex; /* Показываем шапку на телефоне */
+    }
+
+    #sidebar {
+        position: fixed;
+        left: -100%; /* Прячем меню за левый край экрана */
+        top: 0;
+        width: 280px;
+        height: 100vh;
+        transition: left 0.3s ease; /* Плавный выезд */
+        box-shadow: 2px 0 15px rgba(0,0,0,0.5);
+        padding-top: 60px; /* Отступ сверху */
+    }
+
+    /* Класс, который будет добавляться через JavaScript для открытия меню */
+    #sidebar.open {
+        left: 0; 
+    }
+
+    /* Прячем логотип внутри бокового меню на мобильных, так как он есть в верхней шапке */
+    #sidebar .logo {
+        display: none;
+    }
+
+    #content {
+        margin-left: 0;
+        padding: 15px;
+        width: 100%;
+        box-sizing: border-box;
+    }
 }
