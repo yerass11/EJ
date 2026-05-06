@@ -34,12 +34,24 @@ const citiesData = [
 ];
 
 function showPage(pageId) {
+    // Переключаем страницы
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
 
+    // Вызываем нужные функции в зависимости от страницы
     if (pageId === 'rating') updateRatingTable();
     if (pageId === 'kz-map-page') initKZMap();
     if (pageId === 'my-plant-page') updatePlant();
+
+    // Автоматическое закрытие меню на мобильных телефонах после клика
+    const sidebar = document.getElementById('sidebar');
+    if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+    }
+}
+
+function toggleMenu() {
+    document.getElementById('sidebar').classList.toggle('open');
 }
 
 function initKZMap() {
