@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoJourney Challenge</title>
+    <!-- Браузер белгішесі (логотип) -->
+    <link rel="icon" type="image/png" href="logo.png">
+    <!-- Leaflet картасын қосу -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav id="sidebar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo" class="main-logo">
+            <span>EcoJourney</span>
+        </div>
+        <ul>
+            <li id="menu-login" onclick="showPage('login')"><i class="fas fa-user"></i> Кіру</li>
+            <li id="menu-kz" onclick="showPage('kz-map-page')"><i class="fas fa-globe-asia"></i> Қазақстан картасы</li>
+            <li id="menu-plant" onclick="showPage('my-plant-page')"><i class="fas fa-seedling"></i> Менің өсімдігім</li>
+            <li id="menu-map" onclick="showPage('map')"><i class="fas fa-map-marked-alt"></i> Мәселелер картасы</li>
+            <li id="menu-tasks" onclick="showPage('tasks')"><i class="fas fa-tasks"></i> Тапсырмалар</li>
+            <li id="menu-rating" onclick="showPage('rating')"><i class="fas fa-trophy"></i> Рейтинг</li>
+            <li id="menu-market" onclick="showPage('market')"><i class="fas fa-shopping-basket"></i> Дүкен</li>
+            <li id="menu-test" onclick="showPage('test')"><i class="fas fa-vial"></i> Диагностика</li>
+            <li id="menu-social" onclick="showPage('social')"><i class="fas fa-share-alt"></i> Әлеуметтік желі</li>
+        </ul>
+        <div class="score-display">Ұпайлар: <span id="userScore">0</span></div>
+    </nav>
+
+    <main id="content">
+
+        <!-- КІРУ -->
+        <section id="login" class="page active">
+            <h1>Қош келдіңіз!</h1>
+            <div class="card">
+                <h3>Эко-батыр ретінде тіркелу</h3>
+                <input type="text" id="nickInput" placeholder="Никнейміңізді енгізіңіз">
+                <select id="citySelect" onchange="checkCity(this.value)">
+                    <option value="Aktobe">Ақтөбе</option>
+                    <option value="Almaty">Алматы</option>
+                    <option value="Astana">Астана</option>
+                    <option value="other">Басқа қала...</option>
+                </select>
+                <input type="text" id="otherCityInput" placeholder="Қала атауын енгізіңіз" style="display:none;">
+                <button onclick="login()">Кіру</button>
+            </div>
+        </section>
+
+        <!-- ҚАЗАҚСТАН КАРТАСЫ -->
+        <section id="kz-map-page" class="page">
+            <h1>🇰🇿 Қазақстан картасы</h1>
+            <p>Картаны жылжытып, қалалардың мәселелері мен шешімдерін көру үшін маркерлерді басыңыз.</p>
+            <div id="map-kz-container"></div>
+        </section>
+
+        <!-- МЕНІҢ ӨСІМДІГІМ -->
+        <section id="my-plant-page" class="page">
+            <h1>🌱 Менің өсімдігім</h1>
+            <div class="card plant-box">
+                <div id="plant-status">Мәртебе: Жаңадан бастаушы</div>
+                <div id="plant-visual">🌱</div>
+                <h3 id="plant-name">Сіздің ағашыңыз өсіп жатыр...</h3>
+                <div class="progress-container">
+                    <div id="plant-progress-bar"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- МӘСЕЛЕЛЕР КАРТАСЫ -->
+        <section id="map" class="page">
+            <h1>📍 Қаланың эко-нүктелері</h1>
+            <div class="map-placeholder">
+                <p>Мәселенің фотосын көру үшін белгішені басыңыз:</p>
+                <div class="icons-row">
+                    <div class="marker" onclick="showProblem('park')">🌳</div>
+                    <div class="marker" onclick="showProblem('river')">🌊</div>
+                </div>
+            </div>
+            <div id="problemDetail" class="card" style="display:none; margin-top: 20px;">
+                <h3 id="probTitle"></h3>
+                <img id="probImg" src="" style="width:100%; max-width: 500px; border-radius:10px; display: block; margin: 10px 0;">
+                <p id="probDesc"></p>
+            </div>
+        </section>
+
+        <!-- ТАПСЫРМАЛАР -->
+        <section id="tasks" class="page">
+            <h1>🏆 Эко-челлендждер</h1>
+            <div class="task-card">
+                <h3>📸 Фототіркеу</h3>
+                <p>Қоқысты суретке түсіріп, қосымшаға жіберіңіз (+10)</p>
+                <input type="file" id="file1" accept="image/*" class="file-input">
+                <button onclick="uploadAndEarn(1, 10)">Суретті жіберу</button>
+            </div>
+            <div class="task-card">
+                <h3>♻️ Навигатор</h3>
+                <p>Жақын маңдағы қайта өңдеу пунктінің мекенжайын енгізіңіз (+30)</p>
+                <input type="text" id="addressInput" placeholder="Мекенжайды енгізіңіз">
+                <button onclick="submitAddress()">Мекенжайды растау</button>
+            </div>
+            <div class="task-card">
+                <h3>🤝 Тазалау-акциясы</h3>
+                <p>Команда мүшелерінің никнеймдерін үтір арқылы енгізіңіз (+50)</p>
+                <input type="text" id="teamInput" placeholder="Ник1, Ник2, Ник3, Ник4">
+                <button onclick="submitTeam()">Команда жинау</button>
+            </div>
+        </section>
+
+        <!-- РЕЙТИНГ -->
+        <section id="rating" class="page">
+            <h1>📊 Қатысушылар топтамасы</h1>
+            <table id="ratingTable">
+                <thead>
+                    <tr><th>Орын</th><th>Никнейм</th><th>Ұпайлар</th></tr>
+                </thead>
+                <tbody id="ratingBody"></tbody>
+            </table>
+        </section>
+
+        <!-- ДҮКЕН -->
+        <section id="market" class="page">
+            <h1>🎁 Эко-Маркет</h1>
+            <div class="market-grid">
+                <div class="item-card">
+                    <div class="item-icon">☕</div>
+                    <h4>Кофеге жеңілдік</h4>
+                    <button class="buy-btn" onclick="buyItem(50, 'Кофеге жеңілдік')">50 ұпай</button>
+                </div>
+                <div class="item-card">
+                    <div class="item-icon">🛍️</div>
+                    <h4>Сәнді шопер</h4>
+                    <button class="buy-btn" onclick="buyItem(200, 'Эко-шопер')">200 ұпай</button>
+                </div>
+                <div class="item-card">
+                    <div class="item-icon">🎟️</div>
+                    <h4>Киноға билет</h4>
+                    <button class="buy-btn" onclick="buyItem(500, 'Киноға билет')">500 ұпай</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ДИАГНОСТИКА -->
+        <section id="test" class="page">
+            <h1>🧠 Эко-диагностика</h1>
+            <div id="quiz-container" class="card">
+                <div id="question-area">
+                    <p id="question-text">Эко-деңгейіңізді тексеруге дайынсыз ба?</p>
+                    <button onclick="startQuiz()">Тестті бастау</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ӘЛЕУМЕТТІК ЖЕЛІ -->
+        <section id="social" class="page">
+            <h1>📢 Біздің желілер</h1>
+            <div class="social-grid">
+                <a href="#" class="social-btn inst"><i class="fab fa-instagram"></i> Instagram</a>
+                <a href="#" class="social-btn tt"><i class="fab fa-tiktok"></i> TikTok</a>
+                <a href="#" class="social-btn tg"><i class="fab fa-telegram"></i> Telegram</a>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>   
